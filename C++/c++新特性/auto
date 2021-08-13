@@ -1,0 +1,37 @@
+auto
+http://3ms.huawei.com/km/blogs/details/9432975
+
+1.编译器会在编译期间自动推导出变量的类型
+int n = 20;
+auto *p = &n, m = 99;
+&n的类型是int*,编译器会根据auto *p推导出auto为int。后面的m变量自然也为int类型，所以把99赋值给它也是正确的。
+这里我们需要注意，推导的时候不能有二义性。在本例中，编译器根据第一个子表达式已经推导出auto为int类型那么后面的m也只能是int类型。
+
+2. auto的高级用法
+
+（1）与引用结合
+int x = 0;
+auto *p1 = &x; //p1为int*,auto->int
+auto p2 = &x; //p2为int*,auto->int*
+auto &r1 = x; //r1为int&,auto->int
+auto r2 = r1; //r2为int类型
+在第二行中，p1为int*类型，也即auto *为int*，所以auto被推导成了int类型。
+在第三行中，p2为int*类型
+在第四行中，r1为int&类型，auto被推导为int类型
+在第五行中，r1本来是int&类型，但是auto却被推导为int类型，这表明=右边的表达式是一个引用类型时，auto会把引用抛弃，直接推导出它的原始类型。
+
+（2）与const结合
+auto与const的结合：
+int x = 0;
+const auto n = x; //n为const int，auto->int
+auto f = n; //f为int类型, auto->int
+const auto &r1 = x; //r1为const int&,auto->int
+auto &r2 = r1; // r2为const int&, auto->const int
+在第二行中，n为const int，auto被推导为int。
+在第三行中，n为const int类型，但是auto却被推导为int类型，这说明=右边的表达式带有const属性时，auto不会使用const属性，而是直接推导出non-const类型。
+在第四行中，auto被推导为int类型。
+在第五行中，r1是const int类型，auto也被推导出const int类型，这说明当const和引用结合时，auto的推导将保留表达式的const类型。
+
+最后我们来简单总结一下 auto 与 const 结合的用法：
+当类型不为引用时，auto 的推导结果将不保留表达式的 const 属性；
+当类型为引用时，auto 的推导结果将保留表达式的 const 属性。
