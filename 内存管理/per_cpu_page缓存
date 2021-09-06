@@ -1,0 +1,43 @@
+一、per_cpu缓存数据结构
+在每个内存zone结构中都有一个pageset指针，指向本zone域per_cpu缓存管理结构（per_cpu_pageset）
+如果只分配一个页帧，可以直接从per_cpu缓存中分配，而不用经过伙伴系统，可以提高分配效率。
+
+per_cpu_pages是per_cpu缓存结构体。
+1、count记录了per_cpu缓存中页帧的总数
+2、high记录了per_cpu缓存中页帧的上限，如果超过这个值就会释放batch个页帧到伙伴系统中去
+3、如果per_cpu缓存中没有可分配的页帧，就从伙伴系统中分配batch个页帧到缓存中去
+
+per_cpu缓存中的页帧页就挂载struct list_head lists中。
+为了防止产生过多内存碎片，内核将页帧分类：可移动页，不可移动页，可回收页等。（MIGRATE_PCPTYPES表示可能的类型）
+
+struct zone {
+ 
+......
+ 
+        struct per_cpu_pageset __percpu *pageset;
+ 
+......
+ 
+}
+ 
+struct per_cpu_pageset {
+ 
+        struct per_cpu_pages pcp;
+ 
+......
+ 
+};
+struct per_cpu_pages {
+ 
+        int count; 
+ 
+        int high; 
+ 
+        int batch; 
+ 
+        struct list_head lists[MIGRATE_PCPTYPES];
+ 
+};
+
+二、per_cpu缓存初始化
+内核启动初期，per_cpu还没有初始化，用于动态分配per_cpu变量的空间还没有分配，所以定义了一个静态的per_cpu变量boot_pageset，用以暂时管理内存域的per_cpu缓存
