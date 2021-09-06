@@ -1,2 +1,5 @@
 高端内存
 https://blog.csdn.net/qq_24313621/article/details/119668639
+
+内存回收
+1.per_cpu_page缓存
