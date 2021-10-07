@@ -46,7 +46,7 @@ int main()
 
 3、static_cast将整数转浮点数，会有.0
 
-![image-20211006145511402](/Users/zhangyiru/Library/Application Support/typora-user-images/image-20211006145511402.png)
+![image](https://user-images.githubusercontent.com/15630061/136392961-5b12cce9-1768-49f3-8f45-f505c6341a65.png)
 
 将int强制转换成double是没有风险的，是一种简单类型转换为复杂类型，但是将复杂类型转换为简单类型，就有丢失精度的风险了
 
@@ -124,7 +124,7 @@ int main() {
 
 输出：
 
-![image-20211006154506660](/Users/zhangyiru/Library/Application Support/typora-user-images/image-20211006154506660.png)
+![image](https://user-images.githubusercontent.com/15630061/136393174-bf7d718f-df5b-46dc-b485-166ce40a0cf3.png)
 
 值传递会复制两次，一次传递给 catch,另一次抛出时复制
 
@@ -137,7 +137,7 @@ int main() {
 
 5、char a[], char a[5]的区别
 
-![image-20211006171843215](/Users/zhangyiru/Library/Application Support/typora-user-images/image-20211006171843215.png)
+![image](https://user-images.githubusercontent.com/15630061/136393211-ed5f0b48-0439-41f6-a893-544044fecce8.png)
 
 char a[5]是存放在栈上，可以通过指针去访问和修改数组内容；赋值是在运行时确定的；
 
@@ -338,7 +338,7 @@ void*表示任意类型的指针，但是不一定为空
 
 nullptr是c++11引入的新标准，使用nullptr来指向空指针；NULL专门用来表示数值0（c语言不通）
 
-![image-20211007110007751](/Users/zhangyiru/Library/Application Support/typora-user-images/image-20211007110007751.png)
+![image](https://user-images.githubusercontent.com/15630061/136393312-bc362d82-5fe3-49a5-87ba-67c30899135c.png)
 
 a定义为空指针，直接取值会报错，赋值前后地址不变；
 
@@ -459,7 +459,7 @@ int main()
 }
 ```
 
-![img](https://pic4.zhimg.com/80/v2-81dd8125dddd8ad3fc1889dbe15fd04f_720w.jpg)
+![image](https://user-images.githubusercontent.com/15630061/136393389-09bcd8ce-4dc4-4ade-939f-03129b67eeef.png)
 
 通过移动构造，b指向a的资源，a不再拥有资源（可以是动态申请的内存，网络链接，打开的文件，或者是上面的代码段中的string）
 
