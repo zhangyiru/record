@@ -1,0 +1,9 @@
+linux设置用户自动登出时间
+
+1、以root用户登录系统
+2、输入 vi /etc/profile
+查找TMOUT
+TMOUT=300（表示秒数）
+export TMOUT
+3、source /etc/profile 
+使配置文件生效
