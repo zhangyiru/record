@@ -128,12 +128,31 @@ int main() {
 
 值传递会复制两次，一次传递给 catch,另一次抛出时复制
 
-（1）程序中在函数throwFunc()中构造对象d，先后分别调用基类Base和派生类Derived的构造函数完成对象d的初始化，分别输出Base’s constructor与Derived’s constructor；
-（2）C++标准要求被作为异常抛出的对象必须被拷贝复制，导致异常对象d在离开作用域时，触发一次临时对象的拷贝构造，程序输出从结果来看，先后调用了基类Base的拷贝构造函数和派生类Derived的拷贝构造函数，分别输出Base’s copy constructor与Derived’s copy constructor；
-（3）按引用捕获异常比按值捕获异常更加高效。分隔线以上按值捕获异常，导致对象d在传递时再次被拷贝一次，输出Base’s copy constructor，降低了系统效率，使用引用捕获异常可以避免额外的拷贝操作；
-（4）使用引用捕获异常，可以通过基类对象实现虚函数的虚调用，在运行时提现多态性。
+（1）程序中在函数throwFunc()中构造对象d，先后分别调用基类Base和派生类Derived的构造函数完成对象d的初始化，分别输出Base’s constructor与Derived’s constructor；<br/>
+（2）C++标准要求被作为异常抛出的对象必须被拷贝复制，导致异常对象d在离开作用域时，触发一次临时对象的拷贝构造，程序输出从结果来看，先后调用了基类Base的拷贝构造函数和派生类Derived的拷贝构造函数，分别输出Base’s copy constructor与Derived’s copy constructor；<br/>
+（3）按引用捕获异常比按值捕获异常更加高效。分隔线以上按值捕获异常，导致对象d在传递时再次被拷贝一次，输出Base’s copy constructor，降低了系统效率，使用引用捕获异常可以避免额外的拷贝操作；<br/>
+（4）使用引用捕获异常，可以通过基类对象实现虚函数的虚调用，在运行时提现多态性。<br/>
 
-参考：https://blog.csdn.net/K346K346/article/details/81461007
+
+
+throw d被Base& b捕获是由于顺序问题。<br/>
+
+如果基类和子类都被做为异常捕获，则子类的catch代码块必须出现在基类之前。<br/>
+如果把基类放在前面，则子类的catch代码块永远都不会被调用。<br/>
+
+<br/>
+
+参考：
+
+1、捕获基类与子类的异常<br/>
+
+https://blog.csdn.net/shltsh/article/details/46039417
+
+2、使用引用捕获异常<br/>
+
+https://blog.csdn.net/K346K346/article/details/81461007
+
+<br/>
 
 5、char a[], char a[5]的区别
 
