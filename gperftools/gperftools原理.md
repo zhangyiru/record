@@ -2,28 +2,6 @@ HEAPCHECK=normal ./a.out
 
 arm架构可以获取泄漏信息，x86不可以
 
-
-
-DoradoV6-aarch64 
--》羽佳霙 张安然(00351340)
-核心进程没有使用tcmalloc
-
-OceanStorV5-rpm 
--》陈春晓 李孟辉(00422754)
-场景：CCDB
-核数：最大48核
-内存申请大小：无
-并发数目/多线程数：88线程
-
-FS(FusionStorage)
--》房闯闯 谢明燠
-场景：io
-核数：最大48核
-内存申请大小：普遍在4k-16k，更小的不常用
-并发数目/多线程数：不确定
-
-
-
 pprof使用：
 
 pprof --svg ./leak1 /tmp/leak1.292699._main_-end.heap > test.svg
