@@ -16,7 +16,7 @@ tcmalloc为每个线程分配一个thread-local cache，小对象的分配直接
 
 ## 2、tcmalloc架构图
 
-![结构图](http://gao-xiao-long.github.io/img/in-post/tcmalloc/total_overview.png)
+![image-20211025092724822](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20211025092724822.png)
 
 上图展示了tcmalloc的整体结构。
 
@@ -112,48 +112,6 @@ c、触发回收的过程，每次进来轮询伙伴系统中的一个normal链�
 
 
 
-（1）如何分配定长对象？
-
-所有的变长记录进行“取整”，例如分配7字节，就分配8字节，31字节分配32字节，得到多种规格的定长记录。这里带来了内部内存碎片的问题，即分配出去的空间不会被完全利用，有一定浪费。为了减少内部碎片，分配规则按照 8, 16, 32, 48, 64, 80这样子来。注意到，这里并不是简单地使用2的幂级数，因为按照2的幂级数，内存碎片会相当严重，分配65字节，实际会分配128字节，接近50%的内存碎片。而按照这里的分配规格，只会分配80字节，一定程度上减轻了问题。
-
-（2）小对象如何分配？（疑问点：超过256K的分配大小是在哪分配）
-
-在申请小内存（小于256KB时），tcmalloc会根据申请内存的大小，匹配到与之大小最接近的class中，如：
-
-- 申请O～8B大小时，会被匹配到 class1 中，分配 8B 大小
-- 申请9～16B大小时，会被匹配到 class2 中，分配 16B大小
-
-![结构图](http://gao-xiao-long.github.io/img/in-post/tcmalloc/size_class0.png)
-
-tcmalloc通过SizeMap类维护了具体的映射关系
-
-（3）大对象如何分配？
-
-分配对象大于一个page，就需要多个page来分配。多个连续page组成一个Span。大对象直接分配Span，小对象在Span中分配object。
-
-（4）Span如何分配？
-
-初始时只有128个page的Span，如果要分配一个page的Span，就把这个Span分裂成2个，1+127，把127记录下来。
-
-另外需要考虑Span回收问题，即Span如何合并，否则在分配回收多次后，就只剩下很小的Span，带来了外部碎片问题。
-
-所以，释放Span时，需要将前后空闲的Span合并，它们的page要连续。
-
-（5）如何找到前后的Span?
-
-![img](https://pic4.zhimg.com/80/v2-c83e0ec9342a505e69cfeaf304d4bb9f_720w.png)
-
-Span中记录了起始page，知道从Span到page的映射，就可以得到前后的Span。简单来说，用数组记录每个page所属的Span，数组索引是pageid，但是会造成空间浪费。tcmalloc内部使用了radixtree这种数据结构，用较少的空间开销，较快的速度完成。
-
-```c++
-struct Span {
-  PageID        start;          // Starting page number
-  Length        length;         // Number of pages in span
-  Span*         next;           // Used when in link list
-  Span*         prev;           // Used when in link list
- }
-```
-
 
 
 ## 5、核心思想（Segregated Free List）
@@ -162,7 +120,7 @@ tcmalloc的动态内存分配核心思想为离散式空闲列表算法
 
 ### 1、freelist
 
-![img](https://pic2.zhimg.com/80/v2-8627f1c08819b6c8bd03d0b74935ba19_720w.png)
+![image-20211025094817825](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20211025094817825.png)
 
 分配定长内存：假设一个page是4KB，要以n字节为单位（object）进行分配
 
@@ -348,24 +306,46 @@ inline void* do_malloc_or_cpp_alloc(size_t size) {
 
 3、tc_malloc和tc_free函数替换为malloc和free
 
-libc_override_glibc.h
+glibc中，内存分配相关的函数都是弱符号，因此tcmalloc只需要定义自己的函数将其覆盖即可。
 
 ```c++
-#define ALIAS(tc_fn)   __attribute__ ((alias (#tc_fn)))
 extern "C" {
-  void* __libc_malloc(size_t size)                ALIAS(tc_malloc);
-  void __libc_free(void* ptr)                     ALIAS(tc_free);
-}
+  void* malloc(size_t s)                         { return tc_malloc(s);       }
+  void  free(void* p)                            { tc_free(p);                }
+  void* realloc(void* p, size_t s)               { return tc_realloc(p, s);   }
+  void* calloc(size_t n, size_t s)               { return tc_calloc(n, s);    }
+  void  cfree(void* p)                           { tc_cfree(p);               }
+  void* memalign(size_t a, size_t s)             { return tc_memalign(a, s);  }
+  void* aligned_alloc(size_t a, size_t s)        { return tc_memalign(a, s);  }
+  void* valloc(size_t s)                         { return tc_valloc(s);       }
+  void* pvalloc(size_t s)                        { return tc_pvalloc(s);      }
+  int posix_memalign(void** r, size_t a, size_t s)         {
+    return tc_posix_memalign(r, a, s);
+  }
+  void malloc_stats(void)                        { tc_malloc_stats();         }
+  int mallopt(int cmd, int v)                    { return tc_mallopt(cmd, v); }
+#ifdef HAVE_STRUCT_MALLINFO
+  struct mallinfo mallinfo(void)                 { return tc_mallinfo();      }
+#endif
+  size_t malloc_size(void* p)                    { return tc_malloc_size(p); }
+  size_t malloc_usable_size(void* p)             { return tc_malloc_size(p); }
+}  // extern "C"
 ```
 
-libc_override_gcc_and_weak.h
+使用了GCC编译器，则使用其支持的函数属性alias。
+
+libc_override_gcc_and_weak.h：
 
 ```c++
-extern "C" {
+#define ALIAS(tc_fn)   __attribute__ ((alias (#tc_fn), used))
+
+extern "C" { 
   void* malloc(size_t size) __THROW               ALIAS(tc_malloc);
   void free(void* ptr) __THROW                    ALIAS(tc_free);
-}
+}   // extern "C"
 ```
+
+将宏展开，`__attribute__ ((alias ("tc_malloc"), used))`表明tc_malloc是malloc的别名。
 
 ## 7、全局内存
 
@@ -730,3 +710,7 @@ https://zhuanlan.zhihu.com/p/29216091
 4、tcmalloc内存分配与使用分析
 
 https://www.cnblogs.com/taoxinrui/p/6492733.html?utm_source=itdadao&utm_medium=referral
+
+5、tcmalloc解密系列
+
+https://zhuanlan.zhihu.com/p/51432385
