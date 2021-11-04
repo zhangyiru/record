@@ -25,3 +25,11 @@ Starting the Check...Done.
 [zyr@localhost ~]$ gcc hugepage-shm.c 
 [zyr@localhost ~]$ ./a.out 
 shmget: Operation not permitted
+
+
+
+只有被写在sysctl_hugetlb_shm_group里的用户才能使用大页共享内存。
+
+但是目前当分配的共享内存大小小于限制内存的数时可以使用，这个功能需要废弃
+
+https://lore.kernel.org/linux-mm/d14533d8-eb49-9ac0-2f46-a1c452e82f0e@oracle.com/
