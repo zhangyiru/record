@@ -28,7 +28,8 @@ auto f = n; //f为int类型, auto->int
 const auto &r1 = x; //r1为const int&,auto->int
 auto &r2 = r1; // r2为const int&, auto->const int
 在第二行中，n为const int，auto被推导为int。
-在第三行中，n为const int类型，但是auto却被推导为int类型，这说明=右边的表达式带有const属性时，auto不会使用const属性，而是直接推导出non-const类型。
+在第三行中，n为const int类型，但是auto却被推导为int类型，这说明=右边的表达式带有const属性时，**auto不会使用const属性，而是直接推导出non-const类型。**
+
 在第四行中，auto被推导为int类型。
 在第五行中，r1是const int类型，auto也被推导出const int类型，这说明当const和引用结合时，auto的推导将保留表达式的const类型。
 
