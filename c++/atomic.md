@@ -3,13 +3,11 @@
 以下atomic用法正确的是：
 
 A。
-
 std::atomic<int> y(0);
 auto m = y;
 cout << m << endl;
 
 B。
-
 std::atomic<int> y(0);
 std::atomic<int> m(move(y));
 cout << m << endl;
@@ -20,7 +18,6 @@ std::atomic<int> m(y.load());
 cout << m << endl;
 
 D。
-
 std::atomic<int> y(0);
 std::atomic<int> m;
 m.store(y);
