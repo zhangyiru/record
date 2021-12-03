@@ -27,6 +27,6 @@ cout << m << endl;
 
 ## 解析：
 
-c++17前，不能把atomic类型的赋值给auto，因为会调用拷贝构造函数，而atomic的拷贝构造函数是deleted；
+c++17前，不能把atomic类型的赋值给auto，因为会调用拷贝构造函数，而atomic的拷贝构造函数是deleted；<br/>
 c++17后，这种写法不会错误，但是会初始化对象，而不是调用拷贝构造函数
 // https://stackoverflow.com/questions/66449441/in-c-why-does-auto-not-work-with-stdatomic
