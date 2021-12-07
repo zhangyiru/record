@@ -1,6 +1,6 @@
 ## 一、基础知识
 
-1、=表达式在判断中的处理，例如if(a=b+c)
+### 1、=表达式在判断中的处理，例如if(a=b+c)
 
 假设a = 1, b = 2, c = 1
 
@@ -10,7 +10,7 @@ a=b 表示将b的值赋值给a，a=b值为2，if(a=b+c) -> if(3)
 
 
 
-2、函数参数的传递效率，传指针不一定比传值效率高
+### 2、函数参数的传递效率，传指针不一定比传值效率高
 
 ```c++
 #include <iostream>
@@ -44,13 +44,13 @@ int main()
 
 
 
-3、static_cast将整数转浮点数，会有.0
+### 3、static_cast将整数转浮点数，会有.0
 
 ![image](https://user-images.githubusercontent.com/15630061/136392961-5b12cce9-1768-49f3-8f45-f505c6341a65.png)
 
 将int强制转换成double是没有风险的，是一种简单类型转换为复杂类型，但是将复杂类型转换为简单类型，就有丢失精度的风险了
 
-4、异常与捕获
+### 4、异常与捕获
 
 捕获方式：不带引用，带引用，带右值引用
 
@@ -154,7 +154,7 @@ https://blog.csdn.net/K346K346/article/details/81461007
 
 <br/>
 
-5、char a[], char a[5]的区别
+### 5、char a[], char a[5]的区别
 
 ![image](https://user-images.githubusercontent.com/15630061/136393211-ed5f0b48-0439-41f6-a893-544044fecce8.png)
 
@@ -164,7 +164,7 @@ char b[] 虽然没有指明字符串的长度，但是系统已经开好了空�
 
 
 
-6、在一文件中static声明一变量，在另一文件中extern的访问问题
+### 6、在一文件中static声明一变量，在另一文件中extern的访问问题
 
 static是静态存储类型，属于局部变量，只能用于同一个函数内，在其他函数内使用是错误的。
 
@@ -176,7 +176,7 @@ extern是外部存储类型，属于全局变量，可以用于从它定义开�
 
 
 
-7、override关键字
+### 7、override关键字
 
 override关键字可以避免派生类中忘记重写虚函数的错误。
 
@@ -190,7 +190,7 @@ override关键字需要编译期支持c++11，如果使用gcc编译器，需要�
 
 
 
-8、explicit与重新定义继承函数
+### 8、explicit与重新定义继承函数
 
 explicit关键字只能用于修饰只有一个参数的类构造函数，作用是表明该构造函数是显式的，而非隐式的。
 
@@ -251,7 +251,7 @@ effective c++中说：被声明为explicit的构造函数通常比其non-explici
 
 
 
-9、虚函数参数是否可用缺省值（涉及静态绑定&动态绑定）
+### 9、虚函数参数是否可用缺省值（涉及静态绑定&动态绑定）
 
 ```c++
  
@@ -289,6 +289,10 @@ int main()
     return 0;
 }  
 ```
+
+B::Fun with number 10
+
+
 
 1、多态
 
@@ -351,7 +355,7 @@ c++中，虽然虚函数的调用是通过动态绑定来确定的，但是虚�
 
 
 
-10、void* 与nullptr
+### 10、void* 与nullptr
 
 void*表示任意类型的指针，但是不一定为空
 
@@ -367,13 +371,13 @@ c定义为void*指针，指向a
 
 
 
-11、x为一表达式，#x输出？
+### 11、x为一表达式，#x输出？
 
 #将参数变成字符串，##是连接作用
 
 
 
-12、未inline声明的函数一定不会被展开吗？
+### 12、未inline声明的函数一定不会被展开吗？
 
 关于内联说法正确的是（BD）
 
@@ -387,7 +391,7 @@ D、函数的内联替换会避免函数的调用开销（传递实参并返回�
 
 
 
-13、condition-variable与mutux，共享锁
+### 13、condition-variable与mutux，共享锁
 
 std::mutex和std::shared_mutex等锁对象提供lock和unlock来加锁，解锁。但是直接调用这两种方法容易造成执行不到unlock的错误。
 
@@ -395,7 +399,7 @@ std::mutex和std::shared_mutex等锁对象提供lock和unlock来加锁，解锁�
 
 
 
-14、表达式中运算符的优先级
+### 14、表达式中运算符的优先级
 
 a = b + c & d
 
@@ -405,7 +409,7 @@ a = b + c & d
 
 
 
-15、拷贝构造函数与移动构造函数，定义了拷贝构造函数，编译器会自动生成移动构造函数吗？反之呢？
+### 15、拷贝构造函数与移动构造函数，定义了拷贝构造函数，编译器会自动生成移动构造函数吗？反之呢？
 
 移动构造函数如果没有通过=default生成的话，只有在以下三种情况都符合时才会自动生成
 
@@ -494,7 +498,7 @@ https://zhuanlan.zhihu.com/p/94588204
 
 
 
-16、ostringstream用法与string， const char*，及它们的.str()，.c_str()
+### 16、ostringstream用法与string， const char*，及它们的.str()，.c_str()
 
 1、ostringstream与str()
 
@@ -542,7 +546,7 @@ int main()
 
 
 
-17、typedef与using关键字，定义指向数组的指针
+### 17、typedef与using关键字，定义指向数组的指针
 
 typedef：定义一个p指针，指向包含10个int变量的数组
 
@@ -579,7 +583,7 @@ int main()
 
 
 
-18、noexcept关键字
+### 18、noexcept关键字
 
 c++11中，声明一个函数不可以抛出任何异常使用关键字noexcept
 
@@ -587,7 +591,7 @@ c++11中，声明一个函数不可以抛出任何异常使用关键字noexcept
 
 
 
-19、constexpr
+### 19、constexpr
 
 允许将变量声明为constexpr类型，让编译器来验证变量的值是否是一个常量表达式。
 
@@ -636,11 +640,95 @@ c++ const和constexpr的区别？
 
 
 
-20、const int a; 编译错误，需要给定初始值
+### 20、const int a; 编译错误，需要给定初始值
 
 
 
-21、
+### 21、sizeof 类的大小
+
+1、空类大小为1
+
+2、普通成员函数存放在代码区，不占sizeof大小
+
+3、虚函数，会有一个指向虚函数表的指针，在32位系统分配指针大小，占4字节
+
+4、成员变量需要考虑字节对齐
+
+5、静态数据成员被编译器放在程序中的一个全局数据成员中，是类的数据成员，但是不影响类的大小
+
+![image-20211206204748865](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20211206204748865.png)
+
+
+
+### 22、对于引用和指针赋值不产生新对象
+
+![image-20211206213153729](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20211206213153729.png)
+
+
+
+### 24、protected访问权限问题
+
+https://blog.csdn.net/yao5hed/article/details/81119256
+
+只有在派生类中才可以通过派生类对象访问基类的protected成员
+
+
+
+### 25、对象构造函数调用，析构函数调用，成员变量的初始化顺序
+
+构造函数从基类开始，先调用基类构造函数，再调用派生类构造函数
+
+析构函数从派生类开始，先调用派生类构造函数，再调用基类构造函数
+
+成员变量的初始化顺序按照变量定义顺序
+
+
+
+### 26、不能放在头文件中的是
+
+头文件中不可以放变量和函数的定义，可以放const变量定义，变量和函数的声明。
+
+
+
+### 27、结构体大小计算
+
+1、结构体每个成员相对于结构体首地址的偏移量（offset）都是成员大小的整数倍，如有需要编译器会在成员之间加上填充字节
+
+2、结构体的总大小为结构体最宽基本类型成员大小的整数倍，如有需要编译器会在最末一个成员之后加上填充字节（trailing padding）
+
+![image-20211207114120524](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20211207114120524.png)
+
+![image-20211207115156079](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20211207115156079.png)
+
+
+
+### 28、位运算符
+
+& ：只有2个都为1，那么结果是1，否则为0
+
+^ ：两个相同的数会变成0，反之是1
+
+| ：只要有一个是1，那么结果为1，否则为0
+
+
+
+### 29、重载
+
+函数名称相同，参数类型，个数，顺序不同
+
+
+
+### 30、extern
+
+extern关键字主要用于声明全局变量
+
+如果给变量赋值就不是声明而是定义
+
+```c++
+int a = 10;    //定义就是声明
+extern int b;  //声明，不是定义
+extern int b = 20;  //是定义
+```
 
 
 
@@ -660,8 +748,6 @@ D 条件及判定覆盖
 
 ## 三、编程规范
 
-
-
 1、Class 枚举：大驼峰
 
 enum class Color = { RED, GREEN, BLUE};
@@ -674,7 +760,7 @@ enum class Color = { RED, GREEN, BLUE};
 
 ## 四、stl容器相关
 
-1、vector的begin和end指向的位置，vector为空的情况判断
+### 1、vector的begin和end指向的位置，vector为空的情况判断
 
 begin()返回迭代器，指向容器的第一个元素；
 
@@ -690,7 +776,9 @@ vector判空：empty() or size()==0
 
 
 
-2、让vector提升性能 （ACD）
+### 2、vector提升性能 
+
+（ACD）
 
 A. 用reserve改变大小（避免vector扩充时进行拷贝）；
 
@@ -709,6 +797,12 @@ D. 用emplace代替insert
 emplace调用了拷贝构造函数，在容器创建元素时，直接根据需要插入的元素进行构造；
 
 insert先构造了元素，调用了重载运算符函数，对函数进行了赋值，相比emplace比较耗时
+
+
+
+## 3、map排序
+
+为了实现快速查找，map内部本身就是按序存储的（比如红黑树）。在我们插入<key, value>键值对时，就会按照key的大小顺序进行存储
 
 
 
