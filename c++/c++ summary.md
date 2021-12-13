@@ -192,9 +192,9 @@ override关键字需要编译期支持c++11，如果使用gcc编译器，需要�
 
 ### 8、explicit与重新定义继承函数
 
-explicit关键字只能用于修饰只有一个参数的类构造函数，作用是表明该构造函数是显式的，而非隐式的。
+（1）explicit关键字只能用于修饰只有一个参数的类构造函数，作用是表明该构造函数是显式的，而非隐式的。
 
-对应的另一个关键字是implicit，类构造函数默认情况下声明为implicit。
+（2）对应的另一个关键字是implicit，类构造函数默认情况下声明为implicit。
 
 ```c++
 class CxString  // 没有使用explicit关键字的类声明, 即默认为隐式声明  
@@ -248,6 +248,10 @@ explicit只对有一个参数的类构造函数有效，如果类构造函数参
 effective c++中说：被声明为explicit的构造函数通常比其non-explicit兄弟更受欢迎。因为它们禁止编译器执行非预期（往往也不被期望）的类型转换。除非我有一个好理由允许构造函数被用于隐式类型转换，否则我会把它声明为explicit，鼓励大家遵循相同的政策。
 
 参考：https://www.cnblogs.com/rednodel/p/9299251.html
+
+
+
+（3）explicit关键字不可以被子类继承。
 
 
 
@@ -619,7 +623,7 @@ int main()
     foo(i); // Call is Ok
     
     // But...
-    std::array<int, foo(i)> arr1; // Error
+    std::array<int, foo(i)> arr1; // Error 编译期间无法算出foo(i)的值
    
 }
 ```
@@ -732,6 +736,107 @@ extern int b = 20;  //是定义
 
 
 
+### 31、recursive\_mutex
+
+std::recursive_mutex 与 std::mutex 一样，也是一种可以被上锁的对象。
+
+但是和 std::mutex 不同的是，std::recursive_mutex 允许同一个线程对互斥量多次上锁（即**递归锁**），来获得对互斥量对象的多层所有权，std::recursive_mutex 释放互斥量时需要调用与该锁层次深度相同次数的 unlock()，可理解为 lock() 次数和 unlock() 次数相同，除此之外，std::recursive_mutex 的特性和 std::mutex 大致相同。
+
+
+
+### 32、函数对象和函数指针
+
+函数指针：执行函数的指针变量。每个函数都有一个入口地址，那么指向这个函数的函数指针就指向了这个地址。
+
+函数对象：本质是类对象
+
+```c++
+class Inc
+{
+    public:
+    void operator()(int& a)
+    {
+        ++a;
+    }
+};
+```
+
+相比函数指针性能更高。因为调用Inc()的operator()实质上是调用这个类成员的成员函数,而这个成员函数默认是inline的。但函数指针就是普通的调用函数，效率低。
+
+
+
+### 33、future/shared_future
+
+future 是一个用来获取异步任务的结果，其存在的意义其实就是为了解决 std::thread 无法返回值的问题。
+
+
+
+1、std::future对象只有在有效的(valid)情况下才有用(useful)
+
+可以通过以下方式获取future：
+
+（1）std::async 函数会返回一个std::future
+（2）std::promise::get_future 调用成员函数，获取 std::future
+（3）std::packaged_task::get_future 调用成员函数，获取 std::future
+
+
+
+2、future的拷贝构造函数是被禁用的
+
+只提供了默认构造函数和 move构造函数
+
+
+
+3、对future处理方法
+
+（1）get 等待异步操作结束并返回结果
+
+（2）wait 只是等待异步操作完成，没有返回值
+
+（3）wait_until与wait类似，但可设置一个绝对时间点
+
+（4）wait_for用于超时等待返回结果
+
+
+
+shared_future 提供了一种访问异步操作结果的机制，允许多个线程等待同一个共享状态，既支持移动操作也支持拷贝操作，可以引用相同的共享状态，允许一旦共享状态就绪就可以多次检索共享状态下的值
+
+shared_future 在get后，不会释放共享状态，可以拷贝，共享某个共享状态的最终结果
+
+
+
+### 34、lambda表达式
+
+```c++
+void showlll()
+{
+    int var = 5;
+    static int base = 3;
+    auto func = [=]()mutable {
+        ++base;
+        ++var;
+        return base+var;
+    };
+    auto ret1 = func(); //4+6 = 10
+    auto ret2 = func(); //5+7 = 12
+    cout<<ret1<<" "<<ret2<<" "<<var<<" "<<base<<endl;
+}
+```
+
+输出 10 12 5 5 /*-*-
+
+
+
+因为是按值捕获，所以在lambda表达式内对var的修改不影响var，而base是静态变量，数据段内共同拥有这个实体，所以lambda内修改会影响。
+
+
+
+### 35、typedef不能使用throw
+
+
+
+
+
 ## 二、开发者测试
 
 1、测试覆盖中，覆盖程度最高的是 B
@@ -812,23 +917,27 @@ gdb速查手册：https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf
 
 
 
-1、不退出gdb指向dir命令用什么命令 dir
+### 1、不退出gdb指向dir命令用什么命令 
+
+shelldir
 
 
 
-2、gdb查看调用栈的命令 bt
+### 2、gdb查看调用栈的命令
 
 查看调用栈最外三层的命令： bt 3
 
 查看调用栈内三层的命令： bt -3
 
-3、gdb监控变量修改并退出的命令
+
+
+### 3、gdb监控变量修改并退出的命令
 
 watch，用于观察某个变量/内存地址的状态，可以监控变量/内存值是否被程序读/写的情况
 
 
 
-4、gdb查看指定位置起始的内存内容，以16进制单字节
+### 4、gdb查看指定位置起始的内存内容，以16进制单字节
 
 x/1xb
 
@@ -851,14 +960,14 @@ f （floating）按浮点数格式显示变量。
 
 
 
-5、设置了断点，继续执行的命令是？
+### 5、设置了断点，继续执行的命令是？
 
 continue，next，step
 
 
 
-6、gdb set [arg1 arg2] 可以改变运行时的参数
+### 6、gdb set [arg1 arg2] 可以改变运行时的参数
 
 
 
-7、gdb show args可以运行的时候展现参数
+### 7、gdb show args可以运行的时候展现参数

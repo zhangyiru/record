@@ -53,3 +53,35 @@
 
 
 https://biscuitos.github.io/blog/HISTORY-PCP/
+
+默认值：
+
+None 0, zone    DMA
+
+high：0
+
+Node 0, zone    DMA32
+
+high：186
+
+Node 0, zone   Normal
+
+high：42
+
+batch=7 7*6=42
+
+sysctl -n vm.percpu_pagelist_fraction改为8后再改为0后的情况：
+
+None 0, zone    DMA
+
+high：0
+
+Node 0, zone    DMA32
+
+high：186
+
+Node 0, zone   Normal
+
+high：186
+
+batch=31 31*6=186
