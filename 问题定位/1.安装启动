@@ -1,0 +1,91 @@
+## 1、安装升级
+
+技术栈：
+
+（1）安装
+
+Ctrl + Alt +F1可以切换到控制台，
+
+Ctrl + Alt +F6返回图形界面
+
+安装日志；显示 /tmp/anaconda.log 里保存的信息。
+
+存储日志；显示 /tmp/storage.log 里保存的和内核及系统服务相关的存储设备的信息。
+
+程序日志；显示 /tmp/program.log 里保存的其他系统工具的信息。
+
+（2）启动流程：
+
+BIOS -> GRUB2（boot.img+core.img）-> GRUB2会先安装MBR中的代码，即boot.img 
+
+-> boot.img来加载GRUB的另一个镜像core.img（diskboot.img + lzma_decompress.img + kernel.img + modules&others）
+
+-> 若硬盘启动，扇区里面是diskboot.img；boot.img 将控制权交给 diskboot.img 后，diskboot.img 的任务就是将 core.img 的其他部分加载进来
+
+-> kernel.img选择加载linux kernel image 内核（vmlinuz 包含了操作系统内核的所有代码和数据结构）已经被加载到内存并且掌握了控制权
+
+-> 当vmlinuz启动后，它会将initramfs文件加载到内存中，并将控制权交给它。initramfs会解压缩并加载所有必要的驱动程序和文件系统模块，然后将控制权交还给vmlinuz，让它继续完成操作系统的初始化过程。
+
+-> 基于内存的文件系统，访问这个文件系统不需要存储介质的驱动程序，因为文件系统就抽象在内存中，
+
+-> start_kernel
+
+-> rest_init -> kernel_init
+
+rest_init()中会创建系统1号进程kernel_init，kernel_init会执行ramdisk中的init程序，并切换至用户态，加载驱动后执行真正的根文件系统中的init程序
+
+
+
+安装问题定位思路：
+
+（1）网络问题：iso在本地，服务器在远端，网络不稳定导致安装中断或卡住
+
+报错：卡在check media；download package失败；未找到光驱；checksum校验失败
+
+解决：多尝试几次；把iso拷贝到环境上重试
+
+（2）逻辑卷/RAID残留：磁盘中残留原有LVM逻辑卷或软raid，导致安装报错
+
+报错：进入图形化界面报错如下：残留分区信息name already in use；raid信息错误
+
+解决：pvremove /dev/mapper/xxx删除原有逻辑卷；
+
+格式化磁盘：
+
+从阵列中移除一个设备，先将这个设备标记为 faulty
+
+mdadm --fail /dev/md0 /dev/sdxx
+
+再从阵列中移除这个设备
+
+mdadm --remove /dev/md0 /dev/sdxx
+
+永久移除设备
+
+mdadm --zero-superblock /dev/sdxx
+
+重启anaconda
+
+systemctl restart anaconda
+
+
+
+启动问题定位思路：
+
+（1）在某个启动点停下来：rd.break={cmdline|pre-udev|pre-trigger|initqueue|pre-mount|mount|pre-pivot|cleanup}
+
+比较常用的是 rd.break=pre-mount（根文件系统挂载之前） 和 rd.break（dracut 最后阶段，switch-root 之前）
+
+（2）rd.shell：initramfs 执行失败，进入shell
+
+
+
+参考链接：
+
+1、解压vmlinuz和解压initrd（initramfs)
+
+https://www.cnblogs.com/oracleloyal/p/5583396.html
+
+2、从零开始带你搞懂Linux系统启动流程
+
+https://blog.csdn.net/fghklfgkhd/article/details/121409030?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1-121409030-blog-124613619.pc_relevant_default&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1-121409030-blog-124613619.pc_relevant_default&utm_relevant_index=2
