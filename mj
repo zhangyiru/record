@@ -1,3 +1,43 @@
+2023.7.3 大华存储团队 一面
+1、启动流程
+2、伙伴系统和slab分配器
+kmem_cache_create进行slab分配
+3、buffer和cache区别
+buffer ：作为buffer cache的内存，是块设备的读写缓冲区 
+比如你每秒要写100次硬盘，对系统冲击很大，浪费了大量时间在忙着处理开始写和结束写这两件事嘛。用个buffer暂存起来，变成每10秒写一次硬盘，对系统的冲击就很小，写入效率高了
+cache：作为page cache的内存， 文件系统的cache 
+加快取用的速度。比如你一个很复杂的计算做完了，下次还要用结果，就把结果放手边一个好拿的地方存着，下次不用再算了。加快了数据取用的速度
+4、文件系统缓存算buffer还是cache --- cache
+
+2023.7.9 大华存储团队 二面
+1.关抢占机制
+为什么自旋锁调用底层不仅关中断而且关抢占？
+https://zhuanlan.zhihu.com/p/483380330
+关中断是因为中断处理程序有可能重入已获得自旋锁的代码段，造成递归死锁。
+但是关了中断，时钟中断也关了，那么时间片无法计算了，不会调度了，为什么还要关抢占？
+关抢占是因为虽然时钟中断被关掉，但是 Linux 有两种调度策略，SCHED_FIFO 和 SCHED_RR，FCHED_FIFO 是简单的队列调度，并没有时间片的限制，先来先运行，除非是阻塞或者主动让出(yield)，否则一直占用 CPU，即使关中断也不能阻止优先级高的进程被调度运行。
+
+2.mutex与spinlock区别 mutex会自旋吗
+https://zhuanlan.zhihu.com/p/88427657
+spinlock不会使线程状态发生切换，mutex在获取不到锁的时候会选择sleep
+mutex获取锁分为两阶段，第一阶段在用户态采用spinlock锁总线的方式获取一次锁，如果成功立即返回；否则进入第二阶段，调用系统的futex锁去sleep，当锁可用后被唤醒，继续竞争锁。
+
+3.io拆分如何实现
+/sys/block/sdx/queue/下的接口
+max_sectors_kb:512     (单位KB)
+max_hw_sectors_kb:1024  (单位KB)
+max_hw_sectors_kb： maximum size of a single I/O the hardware can accept
+                    (硬件单次可可以接受的最大IO长度)
+max_sectors_kb：    the maximum size the block layer will send
+                    (block 单次发送IO最大的长度)
+
+4.ab进程拥有一块共享内存，如何实现通信？
+管道，消息队列，共享内存，信号量和PV操作，互斥锁
+
+5.msleep会D状态吗？
+a.获取指定（或略长）的延时时间，但不会忙等待；
+b.调用时进入不可中断休眠态，不能被信号唤醒；
+
 2023.7.13 福瑞泰克 一面
 1.踩内存定位思路
 2.内存泄漏如何定位？kasan 
@@ -6,7 +46,7 @@
 5.perf性能调测经验，cache miss相关
 6.网络栈tcp快重传 快恢复
 
-2023.7.17 大华一面
+2023.7.17 大华安全团队 一面
 1、ftrace如何使用
 2、kprobe使用与实现
 3、常见的内核锁 rcu mutex spinlock
