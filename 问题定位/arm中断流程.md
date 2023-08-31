@@ -231,7 +231,8 @@ ENDPROC(ret_to_user)
 
 ## 相关UE错误处理
 
-![image-20230325110609766](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20230325110609766.png)
+![image](https://github.com/zhangyiru/record/assets/15630061/483b7277-24da-41db-b926-9d38ec0c2ac6)
+
 
 不可纠正错误（Uncorrected，缩写标记为UE）该错误被检测到且未被纠正或延迟，错误在系统中潜伏
 
