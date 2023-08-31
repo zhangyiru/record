@@ -149,7 +149,6 @@ static inline void __raw_spin_lock(raw_spinlock_t *lock)
 
 https://stackoverflow.com/questions/14723924/using-spinlocks-in-user-space-application
 
-![image-20230220163328701](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20230220163328701.png)
 
 关抢占和关中断在用户态无法做到
 
