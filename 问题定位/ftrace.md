@@ -15,7 +15,6 @@ echo 0 > ${dir}/tracing_on
 less ${dir}/trace
 ```
 
-![image-20220629093057329](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20220629093057329.png)
 
 - 进程标识符（TASK-PID）
 - 运行这个进程的 CPU（CPU#）
@@ -32,9 +31,6 @@ less ${dir}/trace
 
 
 echo function_graph > /sys/kernel/debug/tracing/current_tracer
-
-![image-20220629093311469](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20220629093311469.png)
-
 
 
 DURATION 展示了花费在每个运行的函数上的时间。
@@ -94,11 +90,8 @@ trace_kmem_cache_alloc 它本身就是一个跟踪点
 
 在跟踪事件前，要开启Ring缓冲区写入（echo 1 > /sys/kernel/debug/tracing/tracing_on）
 
-![image-20220629095940054](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20220629095940054.png)
 
 通过availble_events查看事件列表
-
-![image-20220629095739878](C:\Users\z00585918\AppData\Roaming\Typora\typora-user-images\image-20220629095739878.png)
 
 
 
