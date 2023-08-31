@@ -1,0 +1,54 @@
+https://blog.csdn.net/luckyapple1028/article/details/71843359
+
+Fault-injection默认实现了6种错误注入方式，分别是failslab、fail_page_alloc、fail_futex、fail_make_request、fail_io_timeout和fail_mmc_request。它们分别的功能如下：
+
+### 1）failslab
+
+注入slab分配器内存分配错误，主要包括kmalloc()、kmem_cache_alloc()等等。
+
+## 2）fail_page_alloc
+
+注入内存页分配错误，主要包括alloc_pages()、get_free_pages()等等（较failslab更为底层）。
+
+## 3）fail_futex
+
+注入futex锁死锁和uaddr错误。
+
+## 4）fail_make_request
+
+注入磁盘IO错误。它对块核心层的generic_make_request()函数进行故障注入，可以通过/sys/block/<device>/make-it-fail或者/sys/block/<device>/<partition>/make-it-fail接口对指定的磁盘或分区进行注入。
+
+## 5）fail_io_timeout
+
+注入IO超时错误。它对IO处理流程中的IO处理完成blk_complete_request()函数进行故障注入，忽略IO完成“通知”。仅对使用通用超时处理流程的drivers有效，例如标准的scsi流程。
+
+## 6）fail_mmc_request
+
+注入mmc 数据错误，仅对mmc设备有效，通过对mmc core返回data error进行错误注入，从而可以测试mmc块设备驱动的错误处理流程以及重试机制，可通过/sys/kernel/debug/mmcx/fail_mmc_request接口进行设置。
+
+以上6中故障注入类型是内核中已经默认实现了的，用户也可以利用其核心框架自行按需进行修改添加，只需依葫芦画瓢即可。我这里挑选了使用最多的failslab、fail_page_alloc、fail_make_request和fail_io_timeout进行详细分析，其他的两种大同小异。
+
+
+
+## 构造卡io
+
+可以req_bio_endio 加时延，要考虑对那个盘，不然都会有时延（msleep），系统卡死了，会操作不了
+
+```c
+struct request {   struct gendisk *rq_disk;}
+
+struct gendisk {
+	/* major, first_minor and minors are input parameters only,
+
+  * don't use directly.  Use disk_devt() and disk_max_parts().
+    */
+    int major;			/* major number of driver */
+    int first_minor;
+    int minors;                     /* maximum number of minors, =1 for
+       * disks that can't be partitioned. */
+
+	char disk_name[DISK_NAME_LEN];	/* name of major driver */
+    ...
+}
+```
+
