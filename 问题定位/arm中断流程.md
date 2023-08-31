@@ -231,7 +231,7 @@ ENDPROC(ret_to_user)
 
 ## 相关UE错误处理
 
-![image](https://github.com/zhangyiru/record/assets/15630061/483b7277-24da-41db-b926-9d38ec0c2ac6)
+![image](https://github.com/zhangyiru/record/assets/15630061/5b8f0a71-0afa-4e1e-8071-1aac88357bb5)
 
 
 不可纠正错误（Uncorrected，缩写标记为UE）该错误被检测到且未被纠正或延迟，错误在系统中潜伏
